@@ -106,15 +106,43 @@ nav.sc .brand .nm{ color:var(--navy); }
 nav.sc .brand img{ filter:none; }
 .nav-links{ display:flex; gap:34px; list-style:none; align-items:center; }
 .nav-links a{ font-family:var(--body); font-size:0.78rem; font-weight:600; letter-spacing:0.16em;
-  text-transform:uppercase; color:var(--on-navy-soft); text-decoration:none; transition:color .2s; }
+  text-transform:uppercase; color:var(--on-navy-soft); text-decoration:none; transition:color .2s; white-space:nowrap; }
 nav.sc .nav-links a{ color:var(--ink-soft); }
 .nav-links a:hover{ color:var(--gold-mid); }
 nav.sc .nav-links a:hover{ color:var(--gold); }
 .nav-cta{ border:1px solid var(--gold-mid); color:var(--gold-mid)!important; padding:9px 20px;
-  border-radius:3px; transition:background .22s,color .22s; }
+  border-radius:3px; transition:background .22s,color .22s; white-space:nowrap; }
 nav.sc .nav-cta{ border-color:var(--gold); color:var(--accent-ink)!important; }
 .nav-cta:hover{ background:var(--gold); color:var(--navy-deep)!important; }
-@media (max-width:980px){ .nav-links li:not(.nav-cta-li){ display:none; } }
+
+/* hamburger toggle */
+.nav-toggle{ display:none; flex-direction:column; justify-content:center; gap:5px; width:42px; height:42px;
+  background:none; border:none; cursor:pointer; padding:0; position:relative; z-index:310; }
+.nav-toggle span{ display:block; width:24px; height:1.5px; margin:0 auto; background:var(--on-navy);
+  transition:transform .35s var(--ease),opacity .25s,background .4s; }
+nav.sc .nav-toggle span{ background:var(--navy); }
+body.menu-open .nav-toggle span{ background:var(--on-navy); }
+body.menu-open .nav-toggle span:nth-child(1){ transform:translateY(3.5px) rotate(45deg); }
+body.menu-open .nav-toggle span:nth-child(2){ transform:translateY(-3.5px) rotate(-45deg); }
+
+/* full-screen mobile menu */
+.nav-mobile{ position:fixed; inset:0; z-index:305; background:linear-gradient(158deg,var(--navy-deep) 0%,#0C4160 60%,#0E5C6A 130%);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+  opacity:0; visibility:hidden; transition:opacity .4s var(--ease),visibility .4s; }
+body.menu-open .nav-mobile{ opacity:1; visibility:visible; }
+.nav-mobile a{ font-family:var(--display); font-size:clamp(1.7rem,6vw,2.1rem); font-weight:500; color:var(--on-navy);
+  text-decoration:none; letter-spacing:0.01em; padding:9px 0; transition:color .2s; }
+.nav-mobile a:hover{ color:var(--ocean-bright); }
+.nav-mobile .m-cta{ margin-top:30px; font-family:var(--body); font-size:0.8rem; font-weight:600;
+  letter-spacing:0.18em; text-transform:uppercase; color:var(--navy-deep); background:var(--gold);
+  padding:16px 38px; border-radius:3px; transition:background .22s; }
+.nav-mobile .m-cta:hover{ background:var(--gold-mid); color:var(--navy-deep); }
+body.menu-open{ overflow:hidden; }
+
+@media (max-width:1180px){
+  .nav-links{ display:none; }
+  .nav-toggle{ display:flex; }
+}
 
 /* ============ HERO ============ */
 .hero{ min-height:100vh; position:relative; display:flex; align-items:center;
@@ -165,6 +193,7 @@ nav.sc .nav-cta{ border-color:var(--gold); color:var(--accent-ink)!important; }
 .scroll-line{ width:1px; height:46px; background:var(--navy-line); position:relative; overflow:hidden; }
 .scroll-line::after{ content:""; position:absolute; inset:0; background:var(--ocean-bright); animation:sd 2.4s var(--ease) infinite; }
 @keyframes sd{ 0%{ transform:translateY(-100%); } 60%,100%{ transform:translateY(100%); } }
+@media (max-width:640px){ .scroll-hint{ display:none; } }
 
 /* entrance */
 @keyframes fu{ from{ opacity:0; transform:translateY(24px); } to{ opacity:1; transform:none; } }
@@ -254,9 +283,10 @@ nav.sc .nav-cta{ border-color:var(--gold); color:var(--accent-ink)!important; }
 .t-body h3{ font-family:var(--display); font-weight:600; font-size:1.5rem; color:var(--navy); margin-bottom:8px; line-height:1.12; }
 .t-body p{ font-size:0.98rem; line-height:1.66; color:var(--ink-soft); max-width:64ch; }
 @media (max-width:760px){
-  .t-item{ grid-template-columns:40px 1fr; }
+  .t-item{ grid-template-columns:40px 1fr; column-gap:18px; }
   .timeline::before{ left:19px; }
   .t-marker{ grid-column:2; margin-bottom:6px; }
+  .t-body{ grid-column:2; }
   .t-marker .stay{ margin-top:6px; }
 }
 
@@ -430,7 +460,20 @@ footer{ background:var(--navy-deep); padding:clamp(48px,5vw,64px) clamp(28px,6vw
     <li><a href="#counselors">Counselors</a></li>
     <li class="nav-cta-li"><a href="#contact" class="nav-cta">Begin the Journey</a></li>
   </ul>
+  <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navMobile">
+    <span></span><span></span>
+  </button>
 </nav>
+
+<!-- ============ MOBILE MENU ============ -->
+<div class="nav-mobile" id="navMobile">
+  <a href="#about">What is C-Bound</a>
+  <a href="#values">Why C-Bound</a>
+  <a href="#program">The Program</a>
+  <a href="#experience">The Experience</a>
+  <a href="#counselors">Counselors</a>
+  <a href="#contact" class="m-cta">Begin the Journey</a>
+</div>
 
 <!-- ============ HERO ============ -->
 <section class="hero" id="top" data-screen-label="Hero">
@@ -796,6 +839,21 @@ footer{ background:var(--navy-deep); padding:clamp(48px,5vw,64px) clamp(28px,6vw
     else { nav.classList.remove('sc'); if(mark){ mark.src = 'assets/compass4-white.svg'; } }
   }
   onScroll(); window.addEventListener('scroll', onScroll, {passive:true});
+
+  /* ---------- mobile menu toggle ---------- */
+  var navToggle = document.getElementById('navToggle');
+  var navMobile = document.getElementById('navMobile');
+  if(navToggle && navMobile){
+    function setMenu(open){
+      document.body.classList.toggle('menu-open', open);
+      navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      navToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    }
+    navToggle.addEventListener('click', function(){ setMenu(!document.body.classList.contains('menu-open')); });
+    navMobile.addEventListener('click', function(e){ if(e.target.closest('a')){ setMenu(false); } });
+    window.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ setMenu(false); } });
+    window.addEventListener('resize', function(){ if(window.innerWidth > 1180){ setMenu(false); } });
+  }
 
   /* ---------- scroll reveal ---------- */
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
