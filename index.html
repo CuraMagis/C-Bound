@@ -126,7 +126,7 @@ body.menu-open .nav-toggle span:nth-child(1){ transform:translateY(3.5px) rotate
 body.menu-open .nav-toggle span:nth-child(2){ transform:translateY(-3.5px) rotate(-45deg); }
 
 /* full-screen mobile menu */
-.nav-mobile{ position:fixed; inset:0; z-index:305; background:linear-gradient(158deg,var(--navy-deep) 0%,#0C4160 60%,#0E5C6A 130%);
+.nav-mobile{ position:fixed; inset:0; z-index:250; background:linear-gradient(158deg,var(--navy-deep) 0%,#0C4160 60%,#0E5C6A 130%);
   display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
   opacity:0; visibility:hidden; transition:opacity .4s var(--ease),visibility .4s; }
 body.menu-open .nav-mobile{ opacity:1; visibility:visible; }
@@ -143,6 +143,9 @@ body.menu-open{ overflow:hidden; }
   .nav-links{ display:none; }
   .nav-toggle{ display:flex; }
 }
+/* keep the nav bar (and its close button) above the open overlay */
+body.menu-open nav{ background:transparent!important; backdrop-filter:none!important; border-bottom-color:transparent!important; }
+body.menu-open nav .brand .nm{ color:var(--on-navy); }
 
 /* ============ HERO ============ */
 .hero{ min-height:100vh; position:relative; display:flex; align-items:center;
@@ -193,7 +196,11 @@ body.menu-open{ overflow:hidden; }
 .scroll-line{ width:1px; height:46px; background:var(--navy-line); position:relative; overflow:hidden; }
 .scroll-line::after{ content:""; position:absolute; inset:0; background:var(--ocean-bright); animation:sd 2.4s var(--ease) infinite; }
 @keyframes sd{ 0%{ transform:translateY(-100%); } 60%,100%{ transform:translateY(100%); } }
-@media (max-width:640px){ .scroll-hint{ display:none; } }
+@media (max-width:640px){
+  .hero{ flex-wrap:wrap; min-height:auto; }
+  .hero-inner{ flex:1 1 100%; padding-bottom:34px; }
+  .scroll-hint{ position:static; flex:1 1 100%; left:auto; bottom:auto; margin:0 0 46px; padding:0 clamp(28px,6vw,108px); }
+}
 
 /* entrance */
 @keyframes fu{ from{ opacity:0; transform:translateY(24px); } to{ opacity:1; transform:none; } }
@@ -218,7 +225,7 @@ body.menu-open{ overflow:hidden; }
   text-transform:uppercase; color:var(--navy-deep); padding:0 30px; display:inline-flex; align-items:center; gap:30px; }
 .marquee-item::after{ content:"✦"; color:rgba(8,47,71,0.42); font-size:0.7em; }
 @keyframes mq{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
-@media (prefers-reduced-motion:reduce){ .marquee-track{ animation:none; } }
+/* the ticker is a core brand element — keep it moving even under reduce-motion */
 
 /* ============ VALUES ============ */
 .values{ background:var(--paper-2); }
@@ -350,7 +357,7 @@ body.menu-open{ overflow:hidden; }
 .cap-chips{ display:flex; flex-direction:column; gap:16px; flex:none; width:150px; padding-left:30px; border-left:1px solid var(--navy-line); }
 .cap-chips .n{ font-family:var(--display); font-weight:600; font-size:1.2rem; color:var(--ocean-bright); line-height:1; }
 .cap-chips .l{ font-size:9.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--on-navy-muted); margin-top:4px; line-height:1.4; max-width:160px; }
-@media (max-width:680px){ .cap-chips{ padding-left:0; border-left:none; border-top:1px solid var(--navy-line); padding-top:18px; flex-direction:row; gap:28px; } }
+@media (max-width:996px){ .cap-chips{ width:100%; flex:1 1 100%; padding-left:0; border-left:none; border-top:1px solid var(--navy-line); padding-top:20px; margin-top:4px; flex-direction:row; flex-wrap:wrap; gap:18px 44px; } }
 
 /* ============ COUNSELORS ============ */
 .counselors{ background:var(--paper-2); }
@@ -805,6 +812,7 @@ footer{ background:var(--navy-deep); padding:clamp(48px,5vw,64px) clamp(28px,6vw
     <div class="fc">
       <h5>Explore</h5>
       <ul>
+        <li><a href="#about">What is C-Bound</a></li>
         <li><a href="#values">Why C-Bound</a></li>
         <li><a href="#program">The Program</a></li>
         <li><a href="#experience">The Experience</a></li>
@@ -850,7 +858,9 @@ footer{ background:var(--navy-deep); padding:clamp(48px,5vw,64px) clamp(28px,6vw
       navToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
     }
     navToggle.addEventListener('click', function(){ setMenu(!document.body.classList.contains('menu-open')); });
-    navMobile.addEventListener('click', function(e){ if(e.target.closest('a')){ setMenu(false); } });
+    navMobile.addEventListener('click', function(e){ if(e.target === navMobile || e.target.closest('a')){ setMenu(false); } });
+    var brandLink = document.querySelector('nav .brand');
+    if(brandLink){ brandLink.addEventListener('click', function(){ setMenu(false); }); }
     window.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ setMenu(false); } });
     window.addEventListener('resize', function(){ if(window.innerWidth > 1180){ setMenu(false); } });
   }
